@@ -33,8 +33,9 @@ public:
     virtual void reshape_event(int width_input,int height_input);
 
 private:
-
-    void set_pixel(int x, int y, const vec3& linecolor=vec3(1,1,1));
+	void plotLineLow(int x0, int y0, int x1, int y1, const vec3& linecolor);
+	void plotLineHigh(int x0, int y0, int x1, int y1, const vec3& linecolor);
+	void set_pixel(int x, int y, const vec3& linecolor=vec3(1,1,1));
     void draw_line(const line_segment& line);
     line_segment create_line(int x0, int y0, int x1, int y1, const vec3& linecolor);
     void draw_line_DDA(int x0, int y0, int x1, int y1, const vec3& linecolor);

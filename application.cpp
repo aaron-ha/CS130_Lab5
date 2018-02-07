@@ -24,6 +24,56 @@ inline unsigned int Make_Pixel(const vec3& linecolor)
     return ((int)(linecolor[0]*255)<<24)|((int)(linecolor[1]*255)<<16)|((int)(linecolor[2]*255)<<8)|0xff;
 }
 
+void application::plotLineLow(int x0, int y0, int x1, int y1, const vec3& linecolor){
+	float dx = x1 - x0;
+	float dy = y1 - y0;
+	
+	float yinit = 1;
+
+	if(dy < 0){
+		yinit = -1;
+		dy = -dy;
+	}
+	
+	float dinit = (2*dy) - dx;
+	float y = y0;
+
+	for (int x = x0; x < x1; ++x){
+		set_pixel(x, y, linecolor);
+		if (dinit > 0){
+			x += 1; //maybe?
+			y = y + yinit;
+			dinit = dinit - (2*dx);
+		}
+		dinit = dinit + (2*dy);
+	}
+}
+
+void application::plotLineHigh(int x0, int y0, int x1, int y1, const vec3& linecolor){
+    float dx = x1 - x0;
+    float dy = y1 - y0;
+
+    float xinit = 1;
+
+    if(dx < 0){
+        xinit = -1;
+        dx = -dx;
+    }
+    
+    float dinit = (2*dx) - dy;
+    float x = x0;
+
+    for (int y = y0; y < y1; ++y){
+        set_pixel(x, y, linecolor);
+        if (dinit > 0){
+            y += 1; //maybe?
+            x = x + xinit;
+            dinit = dinit - (2*dy);
+        }
+        dinit = dinit + (2*dx);
+    }
+}
+
 // set pixel (x,y) in framebuffer to color linecolor, where
 // linecolor is a float array of three values between 0 and 1
 // which specify the amount of red, green, and blue to mix (e.g.
@@ -76,10 +126,22 @@ void application::draw_line_MPA(int x0, int y0, int x1, int y1, const vec3& line
     float dx = x1 - x0;
     float dy = y1 - y0;
 
+	float dinit = 2*dy - dx;
+
     float m = dy/dx;
     float b = y0 - m*x0;
-    for(int x = x0; x < x1; ++x)
-          set_pixel(x, m*x + b,linecolor);
+
+	float y = y0;
+
+    for(int x = x0; x < x1; ++x){
+		y = m*x + b;
+        set_pixel(x, y,linecolor);
+		if (dinit > 0){
+			y = y + 1;
+			dinit = dinit - (2*dx);
+		}
+		dinit = dinit + (2*dy);
+	}
 }
 
 // DDA or MPA algorithms are used based on the mode.
