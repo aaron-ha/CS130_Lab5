@@ -38,10 +38,10 @@ void application::plotLineLow(int x0, int y0, int x1, int y1, const vec3& lineco
 	float dinit = (2*dy) - dx;
 	float y = y0;
 
-	for (int x = x0; x < x1; ++x){
+	for (int x = x0; x <= x1; ++x){
 		set_pixel(x, y, linecolor);
 		if (dinit > 0){
-			x += 1; //maybe?
+			//x += 1; //maybe?
 			y = y + yinit;
 			dinit = dinit - (2*dx);
 		}
@@ -63,10 +63,10 @@ void application::plotLineHigh(int x0, int y0, int x1, int y1, const vec3& linec
     float dinit = (2*dx) - dy;
     float x = x0;
 
-    for (int y = y0; y < y1; ++y){
+    for (int y = y0; y <= y1; ++y){
         set_pixel(x, y, linecolor);
         if (dinit > 0){
-            y += 1; //maybe?
+            //y += 1; //maybe?
             x = x + xinit;
             dinit = dinit - (2*dy);
         }
@@ -123,24 +123,13 @@ void application::draw_line_DDA(int x0, int y0, int x1, int y1, const vec3& line
 void application::draw_line_MPA(int x0, int y0, int x1, int y1, const vec3& linecolor)
 {
     // TODO: NOT WORKING CODE (PUT BETTER CODE HERE!!)
-    float dx = x1 - x0;
-    float dy = y1 - y0;
-
-	float dinit = 2*dy - dx;
-
-    float m = dy/dx;
-    float b = y0 - m*x0;
-
-	float y = y0;
-
-    for(int x = x0; x < x1; ++x){
-		y = m*x + b;
-        set_pixel(x, y,linecolor);
-		if (dinit > 0){
-			y = y + 1;
-			dinit = dinit - (2*dx);
-		}
-		dinit = dinit + (2*dy);
+	if (abs(y1 - y0) < abs(x1 - x0)){
+		if (x0 > x1) plotLineLow(x1, y1, x0, y0, linecolor);
+		else plotLineLow(x0, y0, x1, y1, linecolor);
+	}
+	else{
+		if (y0 > y1) plotLineHigh(x1, y1, x0, y0, linecolor);
+		else plotLineHigh(x0, y0, x1, y1, linecolor);
 	}
 }
 
